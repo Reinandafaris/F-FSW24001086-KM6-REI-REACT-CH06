@@ -1,0 +1,70 @@
+@media only screen and (max-width: 576px) {
+  .home__hero {
+    margin-bottom: 4rem;
+  }
+  .home__img {
+    scale: 1;
+  }
+  .cta__content > h2 {
+    font-size: 1.5rem !important;
+  }
+
+  .service__img-container img {
+    max-width: 256px;
+    display: flex;
+  }
+
+  .service .service__img-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .why-us__header {
+    text-align: center;
+  }
+
+  .faq__header {
+    text-align: center;
+  }
+
+  .home__car-background {
+    width: 96%;
+    height: 8rem;
+  }
+
+  .why-us__cards {
+    display: block;
+  }
+
+  .mobile-nav-hidden {
+    display: none;
+  }
+
+  .desktop-nav-hidden {
+    display: block;
+  }
+
+  .offcanvas-mobile {
+    width: 50% !important;
+  }
+
+  .offcanvas-body > ul {
+    padding: 0 !important;
+  }
+
+  .testimonial__photo-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .testimonial__desc {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+  }
+}
