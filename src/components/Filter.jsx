@@ -1,115 +1,156 @@
-import { useEffect, useState } from "react";
-import Select from "react-select";
+import { useContext, useState } from "react";
+import { CarsContext } from "../context/CarsContext";
+import Card from "./Card";
 
 const Filter = () => {
-  const [product, setProduct] = useState([]);
-  const [selectCategory, setSelectCategory] = useState(null);
+  const { cars } = useContext(CarsContext);
+  const [car, setCar] = useState([]);
 
-  useEffect(() => {
-    fetch(
-      "https://raw.githubusercontent.com/fnurhidayat/probable-garbanzo/main/data/cars.min.json"
-    )
-      .then((res) => res.json())
-      .then((data) => setProduct(data));
-  }, []);
+  const [driverType, setDriverType] = useState("");
+  const [date, setDate] = useState("");
+  const [pickUpTime, setPickUpTime] = useState("");
+  let [totalPassenger, setTotalPassenger] = useState("");
 
-  const categories = Array.from(
-    new Set(product.map((item) => item.available))
-  );
+  const carsFilter = async () => {
+    let filter_dateTime = new Date(`${date} ${pickUpTime}`);
+    let formattedDateTime;
 
-  const categoryOptions = categories.map((available) => ({
-    value: available,
-    label: available ? "supir" : "dewek",
-  }));
+    if (totalPassenger == "") totalPassenger = 0;
 
-  const filterProduct = selectCategory
-    ? product.filter(
-        (item) => item.available === selectCategory.value
-      )
-    : product;
+    if (date == "" && pickUpTime == "" && totalPassenger == "0") {
+      setCar(cars);
+      return;
+    }
+
+    let filteredCars;
+
+    if (totalPassenger == "" || totalPassenger == null) {
+      filter_dateTime = new Date(filter_dateTime.getTime());
+      formattedDateTime = filter_dateTime.toISOString();
+      filteredCars = (car) =>
+        car.availableAt <= formattedDateTime &&
+        car.available === true;
+    } else if (
+      date == "" ||
+      date == null ||
+      pickUpTime == "" ||
+      pickUpTime == null
+    ) {
+      filteredCars = (car) =>
+        car.capacity >= totalPassenger && car.available === true;
+    } else {
+      filter_dateTime = new Date(filter_dateTime.getTime());
+      formattedDateTime = filter_dateTime.toISOString();
+      filteredCars = (car) =>
+        car.capacity >= totalPassenger &&
+        car.available === true &&
+        car.availableAt <= formattedDateTime;
+    }
+
+    const carsFiltered = cars.filter(filteredCars);
+    setCar(carsFiltered);
+  };
+  const filter = cars.sort(() => Math.random() - 0.5);
+  const carFilter = car.sort(() => Math.random() - 0.5);
 
   return (
-    <div className="search">
-      <div className="container">
-        <div className="row">
-          <div className="col-lg-12 col-12">
-            <div className="row search__card mx-lg-5 py-3 px-4">
-              <div className="col-lg-auto col-xl-2 col-xxl-3 col-md-auto">
-                <label>Tipe Driver</label>
-                <Select
-                  options={categoryOptions}
-                  isClearable
-                  placeholder="Driver"
-                  onChange={(selectOption) =>
-                    setSelectCategory(selectOption)
-                  }
-                  value={selectCategory}
-                />
-              </div>
-              <div className="col-lg-auto col-xl-auto col-md-auto">
-                <label>Tanggal</label>
-                <input
-                  // value={tanggal}
-                  // onChange={handleTanggalChange}
-                  type="date"
-                  className="form-control"
-                  placeholder="Pilih Tanggal"
-                  id="tanggal"
-                />
-              </div>
-              <div className="col-lg-auto col-xl-auto col-md-auto search__time">
-                <label>Pilih Waktu</label>
-                <select
-                  // value={waktuJemput}
-                  // onChange={handleWaktuJemputChange}
-                  className="form-select"
-                  aria-label="Default select example"
-                  id="waktuJemput"
-                >
-                  <option defaultValue={"false"}>
-                    Pilih Waktu &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-                    &nbsp;
-                  </option>
-                  <option value="08:00">08.00 WIB</option>
-                  <option value="09:00">09.00 WIB</option>
-                  <option value="10:00">10.00 WIB</option>
-                  <option value="11:00">11.00 WIB</option>
-                  <option value="12:00">12.00 WIB</option>
-                </select>
-              </div>
-              <div className="col-lg-auto col-xl-auto col-md-auto">
-                <label className="fw-light">
-                  Jumlah Penumpang (optional)
-                </label>
-                <div className="input-group">
-                  <input
-                    // value={jumlahPenumpang}
-                    // onChange={handleJumlahPenumpangChange}
-                    type="number"
-                    className="form-control border-end-0"
-                    placeholder="Jumlah Penumpang"
-                    id="jumlahPenumpang"
-                  />
-                  {/* <span className="input-group-text bg-white">
-                    <img src={users} width="20px" alt="" />
-                  </span> */}
+    <>
+      <div className="search">
+        <div className="container">
+          <div className="row">
+            <div className="col-lg-12 col-12">
+              <div className="row search__card mx-lg-5 py-3 px-4">
+                <div className="col-lg-auto col-xl-2 col-xxl-3 col-md-auto">
+                  <label>Tipe Driver</label>
+                  <select
+                    className="form-select"
+                    aria-label="Default select example"
+                    id="tipeDriver"
+                    value={driverType}
+                    onChange={(e) => setDriverType(e.target.value)}
+                  >
+                    <option hidden value="">
+                      Pilih Tipe Driver &nbsp; &nbsp; &nbsp; &nbsp;
+                    </option>
+                    <option value="dengan supir">Dengan Supir</option>
+                    <option value="tanpa supir">
+                      Tanpa Supir (Lepas Kunci)
+                    </option>
+                  </select>
                 </div>
-              </div>
-              <div className="col-lg-2 col-xl-auto col-md-2 pt-4">
-                <button
-                  type="button"
-                  // onClick={handleFilter}
-                  className="btn color-primary-green"
-                  // id="load-btn"
-                >
-                  Cari Mobil
-                </button>
+                <div className="col-lg-auto col-xl-auto col-md-auto">
+                  <label>Tanggal</label>
+                  <input
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
+                    type="date"
+                    className="form-control"
+                    placeholder="Pilih Tanggal"
+                    id="tanggal"
+                  />
+                </div>
+                <div className="col-lg-auto col-xl-auto col-md-auto search__time">
+                  <label>Pilih Waktu</label>
+                  <select
+                    value={pickUpTime}
+                    onChange={(e) => setPickUpTime(e.target.value)}
+                    className="form-select"
+                    aria-label="Default select example"
+                    id="waktuJemput"
+                  >
+                    <option hidden value="">
+                      Pilih Waktu &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                      &nbsp;
+                    </option>
+                    <option value="08:00">08.00 WIB</option>
+                    <option value="09:00">09.00 WIB</option>
+                    <option value="10:00">10.00 WIB</option>
+                    <option value="11:00">11.00 WIB</option>
+                    <option value="12:00">12.00 WIB</option>
+                  </select>
+                </div>
+                <div className="col-lg-auto col-xl-auto col-md-auto">
+                  <label className="fw-light">
+                    Jumlah Penumpang (optional)
+                  </label>
+                  <div className="input-group">
+                    <input
+                      value={totalPassenger}
+                      onChange={(e) =>
+                        setTotalPassenger(e.target.value)
+                      }
+                      type="number"
+                      className="form-control border-end-0"
+                      placeholder="Jumlah Penumpang"
+                      id="jumlahPenumpang"
+                    />
+                  </div>
+                </div>
+                <div className="col-lg-2 col-xl-auto col-md-2 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => carsFilter()}
+                    className="btn color-primary-green"
+                  >
+                    Cari Mobil
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+
+      <Card>
+        {car.length === 0
+          ? filter.map((car) => (
+              <Card.CardItem key={car.id} car={car} />
+            ))
+          : carFilter.map((car) => (
+              <Card.CardItem key={car.id} car={car} />
+            ))}
+      </Card>
+    </>
   );
 };
 
