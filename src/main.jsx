@@ -9,12 +9,17 @@ import CarsContextProvider from "./context/CarsContext.jsx";
 
 import HomePage from "./pages/home.jsx";
 import FilterPage from "./pages/filter.jsx";
+import Login from "./pages/login.jsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <HomePage />,
+    element: <Login />,
     // errorElement: <ErrorPage />,
+  },
+  {
+    path: "/home",
+    element: <HomePage />,
   },
   {
     path: "/filter",

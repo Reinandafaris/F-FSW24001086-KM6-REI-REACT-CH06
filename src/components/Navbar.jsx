@@ -1,4 +1,10 @@
 const Navbar = () => {
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("loginData");
+    window.location.href = "/";
+  };
+
   return (
     <header className="header-nav">
       <div className="container">
@@ -55,8 +61,11 @@ const Navbar = () => {
                         <a href="#faq">FAQ</a>
                       </li>
                       <li>
-                        <button className="btn color-primary-green">
-                          Register
+                        <button
+                          onClick={handleLogout}
+                          className="btn color-primary-green"
+                        >
+                          Logout
                         </button>
                       </li>
                     </ul>
@@ -87,8 +96,11 @@ const Navbar = () => {
                     </a>
                   </li>
                   <li className="nav-item">
-                    <button className="btn color-primary-green">
-                      Register
+                    <button
+                      onClick={handleLogout}
+                      className="btn color-primary-green"
+                    >
+                      Logout
                     </button>
                   </li>
                 </ul>
